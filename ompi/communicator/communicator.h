@@ -38,6 +38,8 @@
 #include "ompi/mca/coll/coll.h"
 #include "ompi/proc/proc.h"
 
+#include "ompi/info/info.h"
+
 BEGIN_C_DECLS
 
 OMPI_DECLSPEC OBJ_CLASS_DECLARATION(ompi_communicator_t);

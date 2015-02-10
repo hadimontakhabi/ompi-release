@@ -26,6 +26,8 @@
 
 #include "ompi_config.h"
 
+#include "orte/include/orte/types.h"
+
 #include "btl_vader.h"
 #include "btl_vader_endpoint.h"
 #include "btl_vader_fifo.h"

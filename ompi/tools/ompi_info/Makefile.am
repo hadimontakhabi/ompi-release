@@ -57,7 +57,7 @@ $(nodist_man_MANS): $(top_builddir)/opal/include/opal_config.h
 endif
 
 ompi_info_SOURCES = \
-        ompi_info.h \
+	ompi_info.h \
         ompi_info.c \
         param.c
 

@@ -186,9 +186,11 @@ int ompi_proc_set_locality(ompi_proc_t *proc)
                 locality = OPAL_PROC_ON_NODE;
             } else {
                 /* we share a node - see what else we share */
+	        /* Hadi commented this out
                 locality = opal_hwloc_base_get_relative_locality(opal_hwloc_topology,
                                                                  ompi_process_info.cpuset,
                                                                  cpu_bitmap);
+		*/
             }
         }
 #else
@@ -227,11 +229,13 @@ int ompi_proc_complete_init(void)
         
         if (proc->proc_name.vpid != OMPI_PROC_MY_NAME->vpid) {
             /* get the locality information */
-            ret = ompi_proc_set_locality(proc);
+            /* Hadi commented this out
+	    ret = ompi_proc_set_locality(proc);
             if (OMPI_SUCCESS != ret) {
                 errcode = ret;
                 break;
             }
+	    */
 
             if (ompi_process_info.num_procs < ompi_hostname_cutoff) {
                 /* IF the number of procs falls below the specified cutoff,
