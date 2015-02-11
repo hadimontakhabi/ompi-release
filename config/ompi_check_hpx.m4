@@ -98,7 +98,7 @@ AC_DEFUN([OMPI_CHECK_HPX],[
     ])
 
     LDFLAGS="$check_hpx_save_LDFLAGS"
-	CPPFLAGS="$check_hpx_save_CPPFLAGS"
+    CPPFLAGS="$check_hpx_save_CPPFLAGS"
     CXXFLAGS="$check_hpx_save_CXXFLAGS"
     LIBS="$check_hpx_save_LIBS"
     AS_IF([test "$ompi_check_hpx_happy" = "yes"],
