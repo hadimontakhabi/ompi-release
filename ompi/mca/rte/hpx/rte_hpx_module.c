@@ -123,7 +123,7 @@ ompi_process_info_t ompi_process_info = {
 
 void ompi_rte_abort(int err_code, char *fmt, ...)
 {
-    
+    return;
 }
 
 
@@ -211,7 +211,7 @@ int ompi_rte_finalize(void)
 
 void ompi_rte_wait_for_debugger(void)
 {
-    
+    return;  
 }    
 
 
