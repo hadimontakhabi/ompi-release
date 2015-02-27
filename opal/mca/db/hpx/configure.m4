@@ -14,12 +14,12 @@
 AC_DEFUN([MCA_opal_db_hpx_CONFIG], [
 	AC_CONFIG_FILES([opal/mca/db/hpx/Makefile])
          
-#	OPAL_CHECK_HPX([db_hpx], [db_hpx_good=1], [db_hpx_good=0])
+	OPAL_CHECK_HPX([db_hpx], [db_hpx_good=1], [db_hpx_good=0])
          
 	# Evaluate succeed / fail
-#	AS_IF([test "$db_hpx_good" = 1],
-#            [$1],
-#            [$2])
+	AS_IF([test "$db_hpx_good" = 1],
+            [$1],
+            [$2])
 
 	# set build flags to use in makefile
 	AC_SUBST([db_hpx_CPPFLAGS])
