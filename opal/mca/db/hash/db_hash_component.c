@@ -99,7 +99,7 @@ static int db_hash_component_register(void)
 {
     mca_base_component_t *c = &mca_db_hash_component.base_version;
 
-    my_store_priority = 1;
+    my_store_priority = 0;
     (void) mca_base_component_var_register(c, "store_priority",
                                            "Priority dictating order in which store commands will given to database components",
                                            MCA_BASE_VAR_TYPE_INT, NULL, 0, 0,
@@ -107,7 +107,7 @@ static int db_hash_component_register(void)
                                            MCA_BASE_VAR_SCOPE_READONLY,
                                            &my_store_priority);
 
-    my_fetch_priority = 100;
+    my_fetch_priority = 0;
     (void) mca_base_component_var_register(c, "fetch_priority",
                                            "Priority dictating order in which fetch commands will given to database components",
                                            MCA_BASE_VAR_TYPE_INT, NULL, 0, 0,
