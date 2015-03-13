@@ -97,6 +97,7 @@ int ompi_rte_barrier(ompi_rte_collective_t *coll)
 
 int ompi_rte_modex(ompi_rte_collective_t *coll)
 {
+    ompi_rte_barrier(coll);
     coll->active = false;
     return OMPI_SUCCESS;
 }
