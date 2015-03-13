@@ -218,7 +218,7 @@ void ompi_rte_wait_for_debugger(void)
 int ompi_rte_db_store(const ompi_process_name_t *nm, const char* key,
                       const void *data, opal_data_type_t type)
 {
-  //printf("ompi_rte_db_store ---> key = %s, type=%d\n", key, (int) type);
+    printf("ompi_rte_db_store ---> key = %s, type=%d\n", key, (int) type);
     if ( type == OPAL_BYTE_OBJECT) {
       opal_byte_object_t *boptr = (opal_byte_object_t *)data;
       //printf("ompi_rte_db_store ---> key = %s, data = %s, len = %d\n", key, (char *) boptr->bytes, (int) boptr->size );      
@@ -234,7 +234,7 @@ int ompi_rte_db_fetch(const struct ompi_proc_t *proc,
                       void **data, opal_data_type_t type)
 {
   
-  //printf("data in ompi_rte_db_fetch key=%s type= %d\n", key, (int) type);
+    printf("data in ompi_rte_db_fetch key=%s type= %d\n", key, (int) type);
     char *tmp;
 
     if ( type == OPAL_BYTE_OBJECT) {

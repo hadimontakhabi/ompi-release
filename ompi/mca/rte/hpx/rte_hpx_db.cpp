@@ -27,7 +27,7 @@ int rte_hpx_num_localities()
 
 int rte_hpx_cpp_put(char* key, int keysize, char* val, int valsize)
 {
-  //std::cout << "rte_hpc_cpp_put: valsize = " << valsize << ", strlen(val) = " << strlen(val) << std::endl;
+  //std::cout << "rte_hpc_cpp_put: valsize = " << valsize << ", strlen(val) = " << strlen(val) << std::endl;  
   std::vector<char> vectorval (val, val + valsize);
   rte_hpx_put( (std::string) key, keysize, vectorval, valsize );
   //std::cout << "rte_hpx_cpp_put: ((std::string)val).length() = " << ((std::string)val).length() << std::endl;
@@ -63,6 +63,7 @@ int rte_hpx_put(std::string key, std::size_t keysize, std::vector<char> val, std
   return 0;
 }
 
+
 std::vector<char> rte_hpx_get(std::string key)
 {
   //std::cout << "ompi>>mca>>rte>>hpx>>rte_hpx_get: " << "key = " << key << std::endl;
@@ -79,7 +80,7 @@ std::vector<char> rte_hpx_get(std::string key)
     }
     current = current->next;
   }
-  std::cout << "key not found" << std::endl;
+  std::cout << "rte_hpx_get: key not found - locality id: " <<  hpx::get_locality_id() << std::endl;
   return empty;
 }
 HPX_PLAIN_ACTION(rte_hpx_get, rte_hpx_get_action);
@@ -120,9 +121,18 @@ int rte_hpx_cpp_get( int vpid, char* key, char** value )
 {
   hpx::naming::id_type const& node = rte_hpx_cpp_get_locality_from_vpid (vpid);
   std::string stringkey = (std::string) key;
-
+  int counter;
+  
   *value = NULL;
   std::vector<char> temp_vector = hpx::async<rte_hpx_get_action>(node, stringkey).get();
+  
+  while (temp_vector.size() == 0) { //quick fix in case the key-value set is not there yet
+    temp_vector = hpx::async<rte_hpx_get_action>(node, stringkey).get();
+    counter++;
+    if (counter == 5) break;
+  }
+  std::cout << "rte_hpx_get: locality id: " <<  hpx::get_locality_id()
+            << ", temp_vector.size() = " << temp_vector.size() << std::endl;
   char *temp_value = (char *) malloc (temp_vector.size());
   memcpy(temp_value, temp_vector.data(), temp_vector.size());
     
