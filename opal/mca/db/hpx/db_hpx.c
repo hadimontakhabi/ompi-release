@@ -15,6 +15,7 @@
 
 
 #include "opal_stdint.h"
+#include "opal/class/opal_hash_table.h"
 #include "opal/class/opal_pointer_array.h"
 #include "opal/dss/dss_types.h"
 #include "opal/util/argv.h"
@@ -77,14 +78,13 @@ static int store(const opal_identifier_t *uid,
                  const char *key, const void *data, 
                  opal_data_type_t type)
 {
-    printf("opal/db/hpx --> store\n");
-
+    printf("opal/db/hpx --> store\n", key);
     opal_identifier_t id;
 
     /* to protect alignment, copy the data across */
     memcpy(&id, uid, sizeof(opal_identifier_t));
 
-    return OPAL_SUCCESS; //opal_db_hpx_cpp_put(key, strlen(key)+1, data, strlen(data)+1);
+    return opal_db_hpx_cpp_put(key, strlen(key)+1, data, strlen(data)+1);
 
 }
 
@@ -92,10 +92,11 @@ static int store(const opal_identifier_t *uid,
 static int store_pointer(const opal_identifier_t *uid,
                          opal_value_t *kv)
 {
-    opal_identifier_t proc;
+    printf("opal/db/hpx --> store_pointer\n");
+    opal_identifier_t id;
 
     /* to protect alignment, copy the data across */
-    memcpy(&proc, uid, sizeof(opal_identifier_t));
+    memcpy(&id, uid, sizeof(opal_identifier_t));
 
     return OPAL_SUCCESS;
 }
@@ -104,24 +105,26 @@ static int fetch(const opal_identifier_t *uid,
                  const char *key, void **data,
                  opal_data_type_t type)
 {
-    opal_identifier_t proc;
+    printf("opal/db/hpx --> fetch\n");
+    opal_identifier_t id;
 
     /* to protect alignment, copy the data across */
-    memcpy(&proc, uid, sizeof(opal_identifier_t));
+    memcpy(&id, uid, sizeof(opal_identifier_t));
 
-    return OPAL_SUCCESS;
+    return opal_db_hpx_cpp_get( opal_db_hpx_vpid(), key, data );
 }
 
 static int fetch_pointer(const opal_identifier_t *uid,
                          const char *key,
                          void **data, opal_data_type_t type)
 {
+    printf("opal/db/hpx --> fetch_pointer\n");
     opal_identifier_t proc;
 
     /* to protect alignment, copy the data across */
     memcpy(&proc, uid, sizeof(opal_identifier_t));
     
-    return OPAL_SUCCESS;
+    return opal_db_hpx_cpp_get( opal_db_hpx_vpid(), key, data );
 }
 
 static int fetch_multiple(const opal_identifier_t *uid,

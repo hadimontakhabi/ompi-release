@@ -1,13 +1,11 @@
 #include "rte_hpx_db.h"
 
-
-Node *current, *first, *secondcurrent, *secondfirst;
-
-std::atomic<int> sum(0);
+/*
+std::atomic<int> rte_hpx_sum(0);
 
 void rte_hpx_one()
 {
-  sum++;
+  rte_hpx_sum++;
 }
 HPX_PLAIN_ACTION(rte_hpx_one, rte_hpx_one_action);
 
@@ -62,6 +60,7 @@ int rte_hpx_put(std::string key, std::size_t keysize, std::vector<char> val, std
   }
   return 0;
 }
+*/
 
 std::vector<char> rte_hpx_get(std::string key)
 {
@@ -79,12 +78,12 @@ std::vector<char> rte_hpx_get(std::string key)
     }
     current = current->next;
   }
-  std::cout << "key not found" << std::endl;
+  std::cout << "rte_hpx_get: key not found" << std::endl;
   return empty;
 }
 HPX_PLAIN_ACTION(rte_hpx_get, rte_hpx_get_action);
 
-
+/*
 
 int rte_hpx_cpp_get_vpid_from_locality ( hpx::naming::id_type locality)
 {
@@ -92,7 +91,6 @@ int rte_hpx_cpp_get_vpid_from_locality ( hpx::naming::id_type locality)
 }
 
 
-static hpx::naming::id_type* list;
 void rte_hpx_local_map()
 {
   int i = 0;
@@ -110,6 +108,7 @@ void rte_hpx_local_map()
 }
 
 
+*/
 hpx::naming::id_type rte_hpx_cpp_get_locality_from_vpid ( int vpid )
 {
   return list[vpid];
@@ -133,7 +132,7 @@ int rte_hpx_cpp_get( int vpid, char* key, char** value )
   return (int) temp_vector.size();
 }
 
-
+/*
 void rte_hpx_barrier()
 {
   std::vector<hpx::naming::id_type> localities =
@@ -147,14 +146,14 @@ void rte_hpx_barrier()
   }
   hpx::wait_all(futures);
   
-  while(sum != (int) localities.size()) {
-    //std::cout << "Inside Barrier -  sum= " << sum 
+  while(rte_hpx_sum != (int) localities.size()) {
+    //std::cout << "Inside Barrier -  rte_hpx_sum= " << rte_hpx_sum 
     //	      << " ,number of localities = " << localities.size() << std::endl;
   }
-  sum = 0;
+  rte_hpx_sum = 0;
   return;
 }
-
+*/
 
 int rte_hpx_cpp_printf(char* out)
 {

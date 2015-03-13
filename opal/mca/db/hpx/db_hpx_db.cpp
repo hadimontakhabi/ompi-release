@@ -1,58 +1,37 @@
 #include "db_hpx_db.h"
 
+std::atomic<int> opal_db_sum(0);
 
-Node *current, *first, *secondcurrent, *secondfirst;
-
-std::atomic<int> sum(0);
-
-void one()
+void opal_db_hpx_one()
 {
-  sum++;
+  opal_db_sum++;
 }
-HPX_PLAIN_ACTION(one, one_action);
+HPX_PLAIN_ACTION(opal_db_hpx_one, opal_db_hpx_one_action);
 
 
-int getlen(Node* node)
-{
-  return (sizeof(int) + (node->value)->size());
-}
-
-
-int gettotallen(Node* firstnode)
-{
-  Node* cur = firstnode;
-  int totallen = 0;
-  while(cur != NULL){
-    totallen += getlen(cur);
-    cur = cur->next;
-  }
-  return totallen;
-}
-
-
-int vpid()
+int opal_db_hpx_vpid()
 {
   return (int) hpx::get_locality_id();
 }
+HPX_PLAIN_ACTION(opal_db_hpx_vpid, opal_db_hpx_vpid_action);
 
 
-int num_localities()
+int opal_db_hpx_num_localities()
 {
   return hpx::get_initial_num_localities();
 }
-
 
 int opal_db_hpx_cpp_put(char* key, int keysize, char* val, int valsize)
 {
   //std::cout << "opal_db_hpx_cpp_put: valsize = " << valsize << ", strlen(val) = " << strlen(val) << std::endl;
   std::vector<char> vectorval (val, val + valsize);
-  put( (std::string) key, keysize, vectorval, valsize );
+  opal_db_hpx_put( (std::string) key, keysize, vectorval, valsize );
   //std::cout << "opal_db_hpx_cpp_put: ((std::string)val).length() = " << ((std::string)val).length() << std::endl;
   return 0;
 }
 
 
-int put(std::string key, std::size_t keysize, std::vector<char> val, std::size_t valsize)
+int opal_db_hpx_put(std::string key, std::size_t keysize, std::vector<char> val, std::size_t valsize)
 {
   Node *temp;
   temp = (Node*) malloc(sizeof(Node));
@@ -62,7 +41,7 @@ int put(std::string key, std::size_t keysize, std::vector<char> val, std::size_t
   
   temp->value = new std::vector <char>(1,0);
   (temp->value)->swap(val);
-  //std::cout << "put: temp->value.size() = " << temp->value->size() << std::endl;
+  //std::cout << "opal_db_hpx_put: temp->value.size() = " << temp->value->size() << std::endl;
 
   temp->next = NULL;
   temp->originator = hpx::get_locality_id();
@@ -80,46 +59,56 @@ int put(std::string key, std::size_t keysize, std::vector<char> val, std::size_t
   return 0;
 }
 
-std::vector<char> get(std::string key)
+std::vector<char>  opal_db_hpx_get(std::string key)
 {
   //std::cout << "key = " << key << std::endl;
   std::vector<char> empty;
   current = first;
   if (current == NULL){
-	std::cout << "List is empty" << std::endl;
+	std::cout << "opal_db_hpx_get: list is empty" << std::endl;
     return empty;
   }
   while (current != NULL){
     if (current->key == key){   //key found
-      // std::cout << "key found" << std::endl;
       return *(current->value);
     }
     current = current->next;
   }
-  std::cout << "key not found" << std::endl;
+  std::cout << "opal_db_hpx_get: key not found" << std::endl;
   return empty;
 }
-HPX_PLAIN_ACTION(get, get_action);
+HPX_PLAIN_ACTION( opal_db_hpx_get,  opal_db_hpx_get_action);
 
 
-
-hpx::naming::id_type* list;
-
-void local_map()
+int opal_db_hpx_cpp_get_vpid_from_locality ( hpx::naming::id_type locality)
 {
+  return hpx::async<opal_db_hpx_vpid_action>(locality).get();
+}
+
+
+//hpx::naming::id_type* list;
+
+void opal_db_hpx_local_map()
+{
+  int i = 0;
   std::vector<hpx::naming::id_type> localities =
     hpx::find_all_localities();
   
   list = new hpx::naming::id_type[localities.size()];
 
-  int i = 0;
   BOOST_FOREACH(hpx::naming::id_type const& node, localities) {
+    i = opal_db_hpx_cpp_get_vpid_from_locality (node); // to keep the order
     list[i] = node;
-    //std::cout << "list[" << i << "] = "<< list[i] << std::endl;
-    i++;
+    std::cout << "opal_db_hpx_local_map: list[" << i << "] = "<< list[i] << std::endl;
   }
   return;  
 }
+
+hpx::naming::id_type opal_db_hpx_cpp_get_locality_from_vpid ( int vpid )
+{
+  return list[vpid];
+}
+
 
 
 int opal_db_hpx_cpp_get( int vpid, char* key, char** value )
@@ -128,8 +117,8 @@ int opal_db_hpx_cpp_get( int vpid, char* key, char** value )
   std::string stringkey = (std::string) key;
 
   *value = NULL;
-  //  const char *temp_value = hpx::async<get_action>(node, stringkey).get().c_str();
-  std::vector<char> temp_vector = hpx::async<get_action>(node, stringkey).get();
+  //  const char *temp_value = hpx::async< opal_db_hpx_get_action>(node, stringkey).get().c_str();
+  std::vector<char> temp_vector = hpx::async<opal_db_hpx_get_action>(node, stringkey).get();
   char *temp_value = (char *) malloc (temp_vector.size());
   memcpy(temp_value, temp_vector.data(), temp_vector.size());
     
@@ -150,16 +139,16 @@ void opal_db_hpx_barrier()
   futures.reserve(localities.size());
  
   BOOST_FOREACH(hpx::naming::id_type const& node, localities) {
-	futures.push_back(hpx::async<one_action>(node));
+	futures.push_back(hpx::async<opal_db_hpx_one_action>(node));
   }
   hpx::wait_all(futures);
   
-  while(sum != (int) localities.size()) {
+  while(opal_db_sum != (int) localities.size()) {
     /*
-    std::cout << "Inside Barrier -  sum= " << sum 
+    std::cout << "Inside Barrier -  opal_db_sum= " << opal_db_sum 
 	      << " ,number of localities = " << localities.size() << std::endl;
     */
   }
-  sum = 0;
+  opal_db_sum = 0;
   return;
 }

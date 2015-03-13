@@ -180,6 +180,7 @@ static int store(const opal_identifier_t *uid,
                  const char *key, const void *data,
                  opal_data_type_t type)
 {
+    printf("opal/db/hash --> store\n");
     proc_data_t *proc_data;
     opal_value_t *kv;
     opal_byte_object_t *boptr;
@@ -319,6 +320,7 @@ static int store(const opal_identifier_t *uid,
 static int store_pointer(const opal_identifier_t *uid,
                          opal_value_t *kv)
 {
+    printf("opal/db/hash --> store_pointer\n");
     proc_data_t *proc_data;
     opal_value_t *k2;
     opal_identifier_t id;
@@ -368,6 +370,7 @@ static int fetch(const opal_identifier_t *uid,
                  const char *key, void **data,
                  opal_data_type_t type)
 {
+    printf("opal/db/hash --> fetch\n");
     proc_data_t *proc_data;
     opal_value_t *kv;
     opal_byte_object_t *boptr;
@@ -479,6 +482,7 @@ static int fetch_pointer(const opal_identifier_t *uid,
                          const char *key,
                          void **data, opal_data_type_t type)
 {
+    printf("opal/db/hash --> fetch\n");
     proc_data_t *proc_data;
     opal_value_t *kv;
     opal_identifier_t id;

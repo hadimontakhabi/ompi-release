@@ -25,12 +25,13 @@
 #include <boost/foreach.hpp>
 #include <boost/format.hpp>
 
+#include "ompi/mca/rte/hpx/rte_hpx_db.h"
+
 #endif
-
-
+ 
 #if defined(__cplusplus)
 extern "C" {
-
+  /*
 struct Node{
   struct Node *next;
   char* key;
@@ -38,18 +39,23 @@ struct Node{
   int originator;
 };
 typedef struct Node Node;
+  
+Node *current, *first, *secondcurrent, *secondfirst;
 
-void one(void);
-int getlen(Node* node);
-int gettotallen(Node* firstnode);
-int vpid(void);
-int num_localities(void);
+hpx::naming::id_type* list;
+  */
+
+void opal_db_hpx_one(void);
+int opal_db_hpx_vpid(void);
+int opal_db_hpx_num_localities(void);
 int opal_db_hpx_cpp_put(char* key, int keysize, char* val, int valsize);
-int put(std::string key, std::size_t keysize, std::vector<char> val, std::size_t valsize);
-void local_map(void);
+int opal_db_hpx_put(std::string key, std::size_t keysize, std::vector<char> val, std::size_t valsize);
+void opal_db_hpx_local_map(void);
 int opal_db_hpx_cpp_get(int vpid, char* key, char** value);
-std::vector<char> get(std::string key);
-void opal_hpx_db_barrier(void);
+std::vector<char>  opal_db_hpx_get(std::string key);
+void opal_db_hpx_barrier(void);
+int opal_db_hpx_cpp_get_vpid_from_locality ( hpx::naming::id_type locality);
+hpx::naming::id_type  opal_db_hpx_cpp_get_locality_from_vpid ( int vpid );
 
 }
 #endif

@@ -89,7 +89,7 @@ uint64_t ompi_rte_hash_name(const ompi_process_name_t * name)
 
 int ompi_rte_barrier(ompi_rte_collective_t *coll)
 {
-    rte_hpx_barrier();
+    opal_db_hpx_barrier();
     coll->active = false;
     return OMPI_SUCCESS;
 }
@@ -137,7 +137,7 @@ int ompi_rte_error_log(const char *file, int line,
                    const char *func, int ret)
 {
     opal_output(0, "%s:%d:%s: Error: %s\n", file, line, func, opal_strerror(ret));
-	return OMPI_SUCCESS;
+    return OMPI_SUCCESS;
 }
 
 
@@ -163,13 +163,13 @@ int ompi_rte_init(int* pargc, char*** pargv)
       //      PACX_crc32 (0, (unsigned char *)hostname, strlen(hostname));
 	//printf("hostname = %s, ompi_process_info.my_name.jobid = %d\n", 
 	//	   hostname, ompi_process_info.my_name.jobid);
-    ompi_process_info.my_name.vpid = rte_hpx_vpid();  
+    ompi_process_info.my_name.vpid = opal_db_hpx_vpid();  
     ompi_process_info.my_hnp_uri =  NULL;
     ompi_process_info.app_num = 0;
-    ompi_process_info.num_procs = rte_hpx_num_localities(); 
+    ompi_process_info.num_procs = opal_db_hpx_num_localities(); 
     ompi_process_info.nodename = strdup(hostname);   
     ompi_process_info.pid = getpid();
-    ompi_process_info.my_node_rank = rte_hpx_vpid();
+    ompi_process_info.my_node_rank = opal_db_hpx_vpid();
     ompi_process_info.my_local_rank = 0;
     ompi_process_info.num_local_peers = 1;
     ompi_process_info.job_session_dir = NULL;
@@ -197,7 +197,7 @@ int ompi_rte_init(int* pargc, char*** pargv)
     opal_db_base_store (&ompi_process_info.my_name, OPAL_SCOPE_INTERNAL, OPAL_DB_LOCALITY, nonsense, OPAL_STRING);
     opal_db_base_store (&ompi_process_info.my_name, OPAL_SCOPE_INTERNAL, rte_daemon_vpid, &ompi_process_info.my_name.vpid, OPAL_UINT32);
 
-    rte_hpx_local_map();
+    opal_db_hpx_local_map();
 
     return OMPI_SUCCESS;
 }
@@ -222,10 +222,10 @@ int ompi_rte_db_store(const ompi_process_name_t *nm, const char* key,
     if ( type == OPAL_BYTE_OBJECT) {
       opal_byte_object_t *boptr = (opal_byte_object_t *)data;
       //printf("ompi_rte_db_store ---> key = %s, data = %s, len = %d\n", key, (char *) boptr->bytes, (int) boptr->size );      
-      return rte_hpx_cpp_put(key, strlen(key)+1, boptr->bytes, boptr->size );
+      return opal_db_hpx_cpp_put(key, strlen(key)+1, boptr->bytes, boptr->size );
     }
 
-    return rte_hpx_cpp_put(key, strlen(key)+1, data, strlen(data)+1);
+    return opal_db_hpx_cpp_put(key, strlen(key)+1, data, strlen(data)+1);
 }
 
 
