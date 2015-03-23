@@ -29,22 +29,19 @@ int rte_hpx_cpp_put(char* key, int keysize, char* val, int valsize)
 {
   //std::cout << "rte_hpc_cpp_put: valsize = " << valsize << ", strlen(val) = " << strlen(val) << std::endl;  
   std::vector<char> vectorval (val, val + valsize);
-  rte_hpx_put( (std::string) key, keysize, vectorval, valsize );
+  rte_hpx_put( std::string (key), vectorval );
   //std::cout << "rte_hpx_cpp_put: ((std::string)val).length() = " << ((std::string)val).length() << std::endl;
   return 0;
 }
 
 
-int rte_hpx_put(std::string key, std::size_t keysize, std::vector<char> val, std::size_t valsize)
+int rte_hpx_put(const std::string& key, const std::vector<char>& val)
 {
   Node *temp;
-  temp = (Node*) malloc(sizeof(Node));
+  temp = new Node;
   
-  temp->key = (char*) malloc (keysize*sizeof(key));
-  memcpy(temp->key, key.c_str(), keysize);
-  
-  temp->value = new std::vector <char>(1,0);
-  (temp->value)->swap(val);
+  temp->key = key;
+  temp->value = val;
   //std::cout << "rte_hpx_put: temp->value.size() = " << temp->value->size() << std::endl;
 
   temp->next = NULL;
@@ -64,10 +61,10 @@ int rte_hpx_put(std::string key, std::size_t keysize, std::vector<char> val, std
 }
 
 
-std::vector<char> rte_hpx_get(std::string key)
+std::vector<char> rte_hpx_get( const std::string& key)
 {
   //std::cout << "ompi>>mca>>rte>>hpx>>rte_hpx_get: " << "key = " << key << std::endl;
-  std::vector<char> empty;
+  static std::vector<char> empty;
   current = first;
   if (current == NULL){
 	std::cout << "List is empty" << std::endl;
@@ -76,7 +73,7 @@ std::vector<char> rte_hpx_get(std::string key)
   while (current != NULL){
     if (current->key == key){   //key found
       //std::cout << "key found: value = " << std::endl;
-      return *(current->value);
+      return (current->value);
     }
     current = current->next;
   }
@@ -120,7 +117,7 @@ hpx::naming::id_type rte_hpx_cpp_get_locality_from_vpid ( int vpid )
 int rte_hpx_cpp_get( int vpid, char* key, char** value )
 {
   hpx::naming::id_type const& node = rte_hpx_cpp_get_locality_from_vpid (vpid);
-  std::string stringkey = (std::string) key;
+  std::string stringkey = key;
   int counter;
   
   *value = NULL;
@@ -133,11 +130,9 @@ int rte_hpx_cpp_get( int vpid, char* key, char** value )
   }
   std::cout << "rte_hpx_get: locality id: " <<  hpx::get_locality_id()
             << ", temp_vector.size() = " << temp_vector.size() << std::endl;
-  char *temp_value = (char *) malloc (temp_vector.size());
-  memcpy(temp_value, temp_vector.data(), temp_vector.size());
-    
-  //std::cout << "temp_value: " << temp_value << " and len = " << temp_vector.size() << std::endl;
-  if(strcmp(temp_value, "")) {
+  if (temp_vector.size() != 0) {
+    char *temp_value = (char *) malloc (temp_vector.size());
+    memcpy(temp_value, temp_vector.data(), temp_vector.size());
     *value = temp_value;
   }
   return (int) temp_vector.size();

@@ -33,8 +33,8 @@ extern "C" {
 
 struct Node{
   struct Node *next;
-  char* key;
-  std::vector<char> *value;
+  std::string key;
+  std::vector<char> value;
   int originator;
 };
 typedef struct Node Node;
@@ -43,10 +43,10 @@ void rte_hpx_one(void);
 int rte_hpx_vpid(void);
 int rte_hpx_num_localities(void);
 int rte_hpx_cpp_put(char* key, int keysize, char* val, int valsize);
-int rte_hpx_put(std::string key, std::size_t keysize, std::vector<char> val, std::size_t valsize);
+int rte_hpx_put(const std::string& key, const std::vector<char>& val);
 void rte_hpx_local_map(void);
 int rte_hpx_cpp_get(int vpid, char* key, char** value);
-std::vector<char> rte_hpx_get(std::string key);
+std::vector<char> rte_hpx_get(const std::string& key);
 void rte_hpx_barrier(void);
 int rte_hpx_cpp_get_vpid_from_locality ( hpx::naming::id_type locality);
 hpx::naming::id_type  rte_hpx_cpp_get_locality_from_vpid ( int vpid );

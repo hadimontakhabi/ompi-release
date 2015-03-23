@@ -24,19 +24,22 @@ bool ompi_rte_proc_is_bound = false;
 char* rte_hpx_print_process_name(const ompi_process_name_t *name)
 {
   int ret;
-  char *buf;
+  char *buf=NULL;
 
+  /* Commented out for now
   ret = opal_tsd_getspecific(print_tsd, (void**) &buf);
   if (OMPI_SUCCESS != ret) return NULL;
+  */
 
   if (NULL == buf) {
 	buf = (char*) malloc(sizeof(char) * 32);
 	if (NULL == buf) return NULL;
   }
 
+  /* Commented out for now
   ret = opal_tsd_setspecific(print_tsd, buf);
   if (OMPI_SUCCESS != ret) return NULL;
-
+  */
   snprintf(buf, 32, "[%u, %u]", 
 		   (unsigned int) name->jobid,
 		   (unsigned int) name->vpid);
@@ -97,8 +100,8 @@ int ompi_rte_barrier(ompi_rte_collective_t *coll)
 
 int ompi_rte_modex(ompi_rte_collective_t *coll)
 {
-    ompi_rte_barrier(coll);
     coll->active = false;
+    //    OBJ_RETAIN(coll);
     return OMPI_SUCCESS;
 }
 
